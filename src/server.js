@@ -60,7 +60,7 @@ fastify.post('/registro', async function (req, reply) {
     latitude,
     rua,
     bairro
-  } = request.body;
+  } = req.body;
 
   const query = `
   INSERT INTO registro_popular (
