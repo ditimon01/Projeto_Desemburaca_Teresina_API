@@ -97,7 +97,7 @@ fastify.get('/registro', async function(req, reply) {
   const query = `
     SELECT
       fid,
-      data,
+      TO_CHAR(data, DD-MM-YYYY) AS data,
       categoria,
       status,
       observacao,
