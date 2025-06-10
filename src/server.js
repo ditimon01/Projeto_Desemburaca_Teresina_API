@@ -49,6 +49,7 @@ fastify.post('/upload', async function (req, reply) {
 
 // Rota de registro no banco de dados
 fastify.post('/registro', async function (req, reply) {
+  fastify.log.info('Requisição recebida em /registro');
   const {
     fid,
     data,
@@ -84,6 +85,9 @@ fastify.post('/registro', async function (req, reply) {
       rua,
       bairro
     ]);
+
+    reply.send({ success: true });
+
   } catch (err){
     console.error(err);
     reply.code(500).send({ error: err.message, detalhe: err.stack });
