@@ -12,4 +12,4 @@ const pool = new Pool({
     family: 4
 })
 
-module.exports = pool;
+module.exports = {query: (text, params) => pool.query(text, params),};
