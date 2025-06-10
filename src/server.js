@@ -93,6 +93,33 @@ fastify.post('/registro', async function (req, reply) {
 })
 
 
+fastify.get('/registro', async function(req, reply) {
+  const query = `
+    SELECT
+      id,
+      data,
+      categoria,
+      status,
+      observacao,
+      imagem,
+      rua,
+      bairro,
+      ST_X(geom) AS longitude,
+      ST_Y(geom) AS latitude
+    FROM registro_popular
+    ORDER BY data DESC
+  `;
+
+  try {
+    const result = await pool.query(query);
+    reply.send(result.rows);
+  } catch (err) {
+    console.error(err);
+    reply.code(500).send({error: err.message, detalhe: err.stack});
+  }
+})
+
+
 // Inicia o servidor
 const start = async () => {
   try {
