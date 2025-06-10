@@ -8,7 +8,8 @@ const pool = new Pool({
     port: 5432,
     ssl: {
         rejectUnauthorized: false
-    }
+    },
+    family: 4
 })
 
 module.exports = pool;
