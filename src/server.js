@@ -51,7 +51,6 @@ fastify.post('/upload', async function (req, reply) {
 fastify.post('/registro', async function (req, reply) {
   fastify.log.info('Requisição recebida em /registro');
   const {
-    fid,
     data,
     categoria,
     status,
@@ -65,16 +64,15 @@ fastify.post('/registro', async function (req, reply) {
 
   const query = `
   INSERT INTO registro_popular (
-      fid, data, categoria, status, observacao, imagem, geom, rua, bairro
+    data, categoria, status, observacao, imagem, geom, rua, bairro
   ) VALUES (
-      $1, $2, $3, $4, $5, $6,
-      ST_SetSRID(ST_MakePoint($7, $8), 4326),
-      $9, $10
+      $1, $2, $3, $4, $5,
+      ST_SetSRID(ST_MakePoint($6, $7), 4326),
+      $8, $9
   )`;
 
   try {
     await pool.query(query, [
-      fid,
       data,
       categoria,
       status,
