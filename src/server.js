@@ -96,7 +96,7 @@ fastify.post('/registro', async function (req, reply) {
 fastify.get('/registro', async function(req, reply) {
   const query = `
     SELECT
-      id,
+      fid,
       data,
       categoria,
       status,
