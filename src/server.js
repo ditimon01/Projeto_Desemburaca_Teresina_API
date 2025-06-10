@@ -107,7 +107,6 @@ fastify.get('/registro', async function(req, reply) {
       ST_X(geom) AS longitude,
       ST_Y(geom) AS latitude
     FROM registro_popular
-    ORDER BY data DESC
   `;
 
   try {
