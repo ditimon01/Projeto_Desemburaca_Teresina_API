@@ -7,6 +7,7 @@ const fs = require('fs');
 const { finished } = require('stream/promises');
 const pool = require('./db');
 
+
 const fastify = Fastify({ logger: true });
 
 // Habilita CORS
@@ -15,7 +16,11 @@ fastify.register(cors, {
 });
 
 // Habilita multipart/form-data
-fastify.register(fastifyMultipart);
+fastify.register(fastifyMultipart, {
+  limits: {
+    fileSize: 5 * 1024 * 1024
+  }
+});
 
 
 // Rota de upload no drive
