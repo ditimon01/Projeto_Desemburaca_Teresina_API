@@ -107,7 +107,8 @@ fastify.get('/registro', async function(req, reply) {
       imagem,
       rua,
       bairro,
-      ST_AsGeoJSON(geom)::json AS geom
+      ST_X(geom) AS longitude,
+      ST_Y(geom) AS latitude
     FROM registro_popular
   `;
 
