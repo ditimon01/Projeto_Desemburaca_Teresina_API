@@ -1,10 +1,6 @@
 const fs = require('fs');
 const { google } = require('googleapis');
 
-/*
-  Autenticação via variável de ambiente
-*/
-
 
 
 /**

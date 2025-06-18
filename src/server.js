@@ -3,9 +3,11 @@ const Fastify = require('fastify');
 const fastifyMultipart = require('@fastify/multipart');
 const cors = require('@fastify/cors');
 const { uploadToDrive } = require('./drive');
+const { reversaoGeografica } = require('./reversao-geografica');
 const fs = require('fs');
 const { finished } = require('stream/promises');
 const pool = require('./db');
+const { request } = require('http');
 
 
 const fastify = Fastify({ logger: true });
@@ -97,6 +99,7 @@ fastify.post('/registro', async function (req, reply) {
 
 
 fastify.get('/registro', async function(req, reply) {
+
   const query = `
     SELECT
       fid,
@@ -119,6 +122,24 @@ fastify.get('/registro', async function(req, reply) {
     console.error(err);
     reply.code(500).send({error: err.message, detalhe: err.stack});
   }
+});
+
+
+fastify.get('/reversao-geografica', async function (req, reply) {
+
+  const { lat, lon } = req.query;
+
+  if(!lat || !lon){
+    reply.code(400).send({ error: 'Parâmetros lat e lon são obrigatórios!' });
+  }
+
+  const resultado = await reversaoGeografica(lat, lon);
+
+  if(resultado.error) {
+    reply.code(500).send(resultado);
+  }
+
+  reply.send(resultado);
 })
 
 
