@@ -53,7 +53,7 @@ fastify.post('/upload', async function (req, reply) {
   reply.send({ success: true, fileId });
 });
 
-// Rota de registro no banco de dados
+// Rota do banco de dados
 fastify.post('/registro', async function (req, reply) {
   fastify.log.info('Requisição recebida em /registro');
   const {
@@ -162,6 +162,34 @@ fastify.get('/registro/:id', async function (req, reply) {
 })
 
 
+fastify.delete('/registro/:id', async function (req, reply) {
+  const { id } = req.params;
+
+  query = `
+    DELETE FROM registro_popular 
+    WHERE fid = $1
+  `;
+
+  try {
+
+    const result = await pool.query(query, [id]);
+
+    if(result.rowCount === 0) {
+      return reply.code(404).send({error: 'Registro não encontrado' });
+    }
+
+    reply.send({ sucess: true, message: `Registro ${id} deletado com sucesso.`})
+
+    
+  } catch (err) {
+    console.error(err);
+    reply.code(500).send({ error: err.message, detalhe: err.stack});
+    
+  }
+
+})
+
+
 fastify.get('/reversao-geografica', async function (req, reply) {
 
   const { lat, lon } = req.query;
@@ -170,13 +198,13 @@ fastify.get('/reversao-geografica', async function (req, reply) {
     reply.code(400).send({ error: 'Parâmetros lat e lon são obrigatórios!' });
   }
 
-  const resultado = await reversaoGeografica(lat, lon);
+  const result = await reversaoGeografica(lat, lon);
 
-  if(resultado.error) {
-    reply.code(500).send(resultado);
+  if(result.error) {
+    reply.code(500).send(result);
   }
 
-  reply.send(resultado);
+  reply.send(result);
 })
 
 
