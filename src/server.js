@@ -217,7 +217,7 @@ fastify.put('/registro/:id', async function (req, reply) {
       continue;
     } 
 
-    if(key in campos){
+    if(campos.includes(key)){
       queryBody.push(`${key} = $${cont}`);
       toSendBody.push(newData[key]);
       cont++;
