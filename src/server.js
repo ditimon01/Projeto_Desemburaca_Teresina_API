@@ -97,7 +97,7 @@ fastify.post('/registro', async function (req, reply) {
 })
 
 
-fastify.get('/registro', async function (req, reply) {
+fastify.get('/registro/', async function (req, reply) {
 
   const query = `
     SELECT
@@ -141,12 +141,17 @@ fastify.get('/registro/:id', async function (req, reply) {
       ST_X(geom) AS longitude,
       ST_Y(geom) AS latitude
     FROM registro_popular
-    WHERE fid = ${id}
+    WHERE fid = $1
   `;
 
   try {
-    const result = await pool.query(query);
-    reply.send(result.rows);
+    const result = await pool.query(query, [id]);
+
+    if(result.rows.length === 0) {
+      return reply.code(404).send({ error: 'Registro não encontrado'})
+    }
+
+    reply.send(result.rows[0]);
     
   } catch (err) {
     console.error(err);
