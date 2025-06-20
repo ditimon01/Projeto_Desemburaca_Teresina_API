@@ -230,6 +230,9 @@ fastify.put('/registro/:id', async function (req, reply) {
     cont += 2;
   }
 
+  if(queryBody.length === 0){
+    return reply.code(400).send({sucess: false, message: 'Nenhum campo inserido para atualizar'});
+  }
 
   const query = `
     UPDATE registro_popular 
