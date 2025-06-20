@@ -242,6 +242,10 @@ fastify.put('/registro/:id', async function (req, reply) {
   try {
     const result = await pool.query(query, toSendBody);
 
+    if(result.rowCount === 0 ) {
+      return reply.code(404).send({ sucess: false, message: `Registro ${id} não encontrado.`});
+    }
+
     reply.send({ sucess: true, message: `Registro ${id} atualizado com sucesso.`});
 
   } catch (err) {
