@@ -7,7 +7,6 @@ const { reversaoGeografica } = require('./reversao-geografica');
 const fs = require('fs');
 const { finished } = require('stream/promises');
 const pool = require('./db');
-const { request } = require('http');
 
 
 const fastify = Fastify({ logger: true });
@@ -98,7 +97,7 @@ fastify.post('/registro', async function (req, reply) {
 })
 
 
-fastify.get('/registro', async function(req, reply) {
+fastify.get('/registro', async function (req, reply) {
 
   const query = `
     SELECT
@@ -123,6 +122,39 @@ fastify.get('/registro', async function(req, reply) {
     reply.code(500).send({error: err.message, detalhe: err.stack});
   }
 });
+
+
+fastify.get('/registro:id', async function (req, reply) {
+
+  const { id } = req.params;
+
+  query = `
+    SELECT 
+      fid,
+      TO_CHAR(data, 'DD-MM-YYYY') AS data,
+      categoria,
+      status,
+      observacao,
+      imagem,
+      rua,
+      bairro,
+      ST_X(geom) AS longitude,
+      ST_Y(geom) AS latitude
+    FROM registro_popular
+    WHERE fid = ${id}
+  `;
+
+  try {
+    const result = await pool.query(query);
+    reply.send(result.rows);
+    
+  } catch (err) {
+    console.error(err);
+    reply.code(500).send({error: err.message, detalhe: err.stack});
+    
+  }
+  
+})
 
 
 fastify.get('/reversao-geografica', async function (req, reply) {
