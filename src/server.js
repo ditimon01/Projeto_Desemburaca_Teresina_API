@@ -14,6 +14,7 @@ const fastify = Fastify({ logger: true });
 // Habilita CORS
 fastify.register(cors, {
   origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
 });
 
 // Habilita multipart/form-data
