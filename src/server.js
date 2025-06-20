@@ -98,7 +98,7 @@ fastify.post('/registro', async function (req, reply) {
   }
 })
 
-fastify.get('/registro/', async function (req, reply) {
+fastify.get('/registro', async function (req, reply) {
 
   const query = `
     SELECT
@@ -112,7 +112,8 @@ fastify.get('/registro/', async function (req, reply) {
       bairro,
       ST_X(geom) AS longitude,
       ST_Y(geom) AS latitude
-    FROM registro_popular
+    FROM registro_popular 
+    ORDER BY fid
   `;
 
   try {
