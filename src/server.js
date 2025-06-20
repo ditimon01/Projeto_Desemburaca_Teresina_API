@@ -124,7 +124,7 @@ fastify.get('/registro', async function (req, reply) {
 });
 
 
-fastify.get('/registro:id', async function (req, reply) {
+fastify.get('/registro/:id', async function (req, reply) {
 
   const { id } = req.params;
 
