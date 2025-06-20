@@ -53,9 +53,11 @@ fastify.post('/upload', async function (req, reply) {
   reply.send({ success: true, fileId });
 });
 
+
+
 // Rota do banco de dados
 fastify.post('/registro', async function (req, reply) {
-  fastify.log.info('Requisição recebida em /registro');
+  
   const {
     data,
     categoria,
@@ -96,7 +98,6 @@ fastify.post('/registro', async function (req, reply) {
   }
 })
 
-
 fastify.get('/registro/', async function (req, reply) {
 
   const query = `
@@ -122,7 +123,6 @@ fastify.get('/registro/', async function (req, reply) {
     reply.code(500).send({error: err.message, detalhe: err.stack});
   }
 });
-
 
 fastify.get('/registro/:id', async function (req, reply) {
 
@@ -161,7 +161,6 @@ fastify.get('/registro/:id', async function (req, reply) {
   
 })
 
-
 fastify.delete('/registro/:id', async function (req, reply) {
   const { id } = req.params;
 
@@ -189,7 +188,71 @@ fastify.delete('/registro/:id', async function (req, reply) {
 
 })
 
+fastify.put('/registro/:id', async function (req, reply) {
 
+  const { id } = req.params;
+  const newData = req.body;
+  
+  let queryBody = [];
+  let toSendBody = [];
+
+  let cont = 1;
+  let updateGeom = false;
+
+  const campos = [
+    "data",
+    "categoria",
+    "observacao",
+    "imagem",
+    "longitude",
+    "latitude",
+    "rua",
+    "bairro"
+  ]
+
+  for(const key in newData) {
+
+    if(key === 'latitude' || key === 'longitude'){
+      updateGeom = true;
+      continue;
+    } 
+
+    if(key in campos){
+      queryBody.push(`${key} = $${cont}`);
+      toSendBody.push(newData[key]);
+      cont++;
+    }
+  }
+
+  if(updateGeom) {
+    queryBody.push(`geom = ST_SetSRID(ST_MakePoint($${cont}, $${cont + 1}), 4326)`);
+    toSendBody.push(newData['longitude'], newData['latitude'])
+    cont += 2;
+  }
+
+
+  const query = `
+    UPDATE registro_popular 
+    SET ${queryBody.join(', ')}
+    WHERE fid = $${cont}
+  `;
+
+  toSendBody.push(id);
+
+  try {
+    const result = await pool.query(query, toSendBody);
+
+    reply.send({ sucess: true, message: `Registro ${id} atualizado com sucesso.`});
+
+  } catch (err) {
+    console.error(err);
+    reply.code(500).send({error: err.message, detalhe: err.stack});
+  }
+})
+
+
+
+// Rota para reversão geográfica
 fastify.get('/reversao-geografica', async function (req, reply) {
 
   const { lat, lon } = req.query;
@@ -206,6 +269,7 @@ fastify.get('/reversao-geografica', async function (req, reply) {
 
   reply.send(result);
 })
+
 
 
 // Inicia o servidor
