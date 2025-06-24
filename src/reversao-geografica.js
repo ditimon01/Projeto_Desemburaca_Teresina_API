@@ -2,7 +2,7 @@
 const axios = require('axios');
 
 async function reversaoGeografica(latitude, longitude) {
-    const API_KEY = 'pk.09b3bd293a4c8abcc27ec915478fc1b8';
+    const API_KEY = process.env.API_KEY_REVERSAO;
     const url = `https://us1.locationiq.com/v1/reverse.php?key=${API_KEY}&lat=${latitude}&lon=${longitude}&format=json`;
 
     try{
